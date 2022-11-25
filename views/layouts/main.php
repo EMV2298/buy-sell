@@ -52,7 +52,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     </a>
     <?php endif; ?>
     <?php if(!Yii::$app->user->getId()): ?>
-    <a class="header__input" href="<?=Yii::$app->urlManager->createUrl('registration'); ?>">Вход и регистрация</a>
+    <a class="header__input" href="<?=Yii::$app->urlManager->createUrl('register'); ?>">Вход и регистрация</a>
     <?php endif; ?>
   </div>
 </header>
