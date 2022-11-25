@@ -12,9 +12,12 @@ class m221125_113209_create_categories_table extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('{{%categories}}', [
-            'id' => $this->primaryKey(),
-        ]);
+        $this->execute(
+            'CREATE TABLE categories(
+                id int AUTO_INCREMENT NOT NULL PRIMARY KEY,
+                name varchar(128) NOT NULL
+            );'
+        );
     }
 
     /**
