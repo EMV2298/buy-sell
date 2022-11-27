@@ -28,7 +28,7 @@ class RegisterController extends Controller
         $user->avatar = UploadFile::upload($model->avatar, 'avatar');
         if ($user->save())
         {
-          return Yii::$app->response->redirect('/');
+          return Yii::$app->response->redirect('login');
         }
         throw new ErrorSaveExeption('Не удалось сохранить');
       }
