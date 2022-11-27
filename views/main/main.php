@@ -36,6 +36,7 @@ use yii\widgets\ListView;
       </ul>
     </div>
   </section>
+  <?php if ($commentedOffersProvider->getCount() > 0): ?>
   <section class="tickets-list">
     <h2 class="visually-hidden">Самые обсуждаемые предложения</h2>
     <div class="tickets-list__wrapper">
@@ -54,4 +55,5 @@ use yii\widgets\ListView;
       ?>
     </div>
   </section>
+  <?php endif; ?>
 </main>
