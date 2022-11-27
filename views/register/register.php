@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
       ?>
         <div class="sign-up__title">
           <h2>Регистрация</h2>
-          <a class="sign-up__link" href="login.html">Вход</a>
+          <a class="sign-up__link" href="<?=Yii::$app->urlManager->createUrl('login') ;?>">Вход</a>
         </div>
         <div class="sign-up__avatar-container js-preview-container">
           <div class="sign-up__avatar js-preview"></div>
