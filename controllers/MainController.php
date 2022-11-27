@@ -38,13 +38,17 @@ class MainController extends Controller
       ->from('offers')
       ->leftJoin('categories', 'categories.id = offers.category_id')
       ->groupBy('categories.id'),
-    ]);    
-
-    return $this->render('main.php', 
-    [
-      'newOffersProvider' => $newOffersProvider,
-      'commentedOffersProvider' => $commentedOffersProvider,
-      'categoriesProvider' => $categoriesProvider
     ]);
+
+    if ($newOffersProvider->getCount() > 0)
+    {
+      return $this->render('main.php', 
+      [
+        'newOffersProvider' => $newOffersProvider,
+        'commentedOffersProvider' => $commentedOffersProvider,
+        'categoriesProvider' => $categoriesProvider
+      ]);
+    }
+    return $this->render('main-empty.php');
   }
 }
