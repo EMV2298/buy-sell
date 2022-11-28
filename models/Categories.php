@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property string $name
  *
+ * @property OfferCategories[] $offerCategories
  * @property Offers[] $offers
  */
 class Categories extends \yii\db\ActiveRecord
@@ -45,12 +46,22 @@ class Categories extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[OfferCategories]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOfferCategories()
+    {
+        return $this->hasMany(OfferCategories::class, ['category_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Offers]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getOffers()
     {
-        return $this->hasMany(Offers::class, ['category_id' => 'id']);
+        return $this->hasMany(Offers::class, ['id' => 'offer_id'])->viaTable('offerCategories', ['category_id' => 'id']);
     }
 }

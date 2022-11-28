@@ -12,13 +12,13 @@ use Yii;
  * @property int $user_id
  * @property string $title
  * @property string $description
- * @property int $category_id
  * @property string $price
  * @property string $type
  * @property string $image
  *
- * @property Categories $category
+ * @property Categories[] $categories
  * @property Comments[] $comments
+ * @property OfferCategories[] $offerCategories
  * @property Users $user
  */
 class Offers extends \yii\db\ActiveRecord
@@ -38,13 +38,12 @@ class Offers extends \yii\db\ActiveRecord
     {
         return [
             [['dt_add'], 'safe'],
-            [['user_id', 'title', 'description', 'category_id', 'price', 'type', 'image'], 'required'],
-            [['user_id', 'category_id'], 'integer'],
+            [['user_id', 'title', 'description', 'price', 'type', 'image'], 'required'],
+            [['user_id'], 'integer'],
             [['description'], 'string'],
             [['title', 'image'], 'string', 'max' => 128],
             [['price', 'type'], 'string', 'max' => 10],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['user_id' => 'id']],
-            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['category_id' => 'id']],
         ];
     }
 
@@ -59,7 +58,6 @@ class Offers extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'title' => 'Title',
             'description' => 'Description',
-            'category_id' => 'Category ID',
             'price' => 'Price',
             'type' => 'Type',
             'image' => 'Image',
@@ -67,13 +65,13 @@ class Offers extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Category]].
+     * Gets query for [[Categories]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCategory()
+    public function getCategories()
     {
-        return $this->hasOne(Categories::class, ['id' => 'category_id']);
+        return $this->hasMany(Categories::class, ['id' => 'category_id'])->viaTable('offerCategories', ['offer_id' => 'id']);
     }
 
     /**
@@ -84,6 +82,16 @@ class Offers extends \yii\db\ActiveRecord
     public function getComments()
     {
         return $this->hasMany(Comments::class, ['offer_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[OfferCategories]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOfferCategories()
+    {
+        return $this->hasMany(OfferCategories::class, ['offer_id' => 'id']);
     }
 
     /**
