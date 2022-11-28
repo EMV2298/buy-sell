@@ -11,7 +11,9 @@ use yii\helpers\Html;
             <div class="ticket-card__info">
               <span class="ticket-card__label">Куплю</span>
               <div class="ticket-card__categories">
-                <a href="<?=Yii::$app->urlManager->createUrl(['offers/category/', 'id' => $model->category_id]); ?>"><?=$model->category->name; ?></a>
+                <?php foreach ($model->offerCategories as $element):?>
+                <a href="<?=Yii::$app->urlManager->createUrl(['offers/category/', 'id' => $element->category->id]); ?>"><?=$element->category->name; ?></a>
+                <?php endforeach; ?>
               </div>
               <div class="ticket-card__header">
                 <h3 class="ticket-card__title"><a href="<?=Yii::$app->urlManager->createUrl(['offers/', 'id' => $model->id]); ?>"><?=Html::encode($model->title ?? ''); ?></a></h3>

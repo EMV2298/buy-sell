@@ -64,4 +64,17 @@ class Categories extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Offers::class, ['id' => 'offer_id'])->viaTable('offerCategories', ['category_id' => 'id']);
     }
+
+    /**
+     * Получить случайное изображение для категории     
+     * @return string имя файла в директории uploads/offer
+     */
+    public function getRandomImage(): string
+    {
+        $randomOffer = OfferCategories::find()
+            ->where(['category_id' => $this->id])
+            ->orderBy('rand()')            
+            ->one();        
+        return $randomOffer->offer->image;
+    }
 }
