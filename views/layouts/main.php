@@ -29,7 +29,7 @@ $user = Yii::$app->user->getIdentity();
 <header class="header <?=Yii::$app->user->getId() ? 'header--logged' : '' ;?> ">
   <div class="header__wrapper">
     <a class="header__logo logo" href="<?=Yii::$app->urlManager->createUrl('/'); ?>">
-      <img src="img/logo.svg" width="179" height="34" alt="Логотип Куплю Продам">
+      <img src="/img/logo.svg" width="179" height="34" alt="Логотип Куплю Продам">
     </a>
     <?php if(Yii::$app->user->getId()): ?>
     <nav class="header__user-menu">
@@ -71,7 +71,7 @@ $user = Yii::$app->user->getIdentity();
     </div>
     <div class="page-footer__col">
       <a href="<?=Yii::$app->urlManager->createUrl('/'); ?>" class="page-footer__logo logo">
-        <img src="img/logo.svg" width="179" height="35" alt="Логотип Куплю Продам">
+        <img src="/img/logo.svg" width="179" height="35" alt="Логотип Куплю Продам">
       </a>
     </div>
     <div class="page-footer__col">

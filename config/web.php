@@ -49,7 +49,10 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
+            'enableStrictParsing' => false,
+            'rules' => [                          
+                'offers/<id:\d+>' => 'offers',
+                                                                                    
             ],
         ],
         
