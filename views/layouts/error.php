@@ -18,12 +18,12 @@ $user = Yii::$app->user->getIdentity();
 
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="html-not-found">
+<html lang="<?= Yii::$app->language ?>" class="<?=Yii::$app->response->statusCode < 500 ? 'html-not-found' : 'html-server translated-ltr'?>">
 <head>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body class="body-not-found">
+<body class="<?=Yii::$app->response->statusCode < 500 ? 'body-not-found' : 'body-server'?>">
 <?php $this->beginBody() ?>
 <?= $content ?>
 <?php $this->endBody() ?>

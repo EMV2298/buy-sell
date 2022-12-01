@@ -1,6 +1,8 @@
+<?php
+?>
 <main>
     <section class="error">
-      <h1 class="error__title">404</h1>
+      <h1 class="error__title"><?=Yii::$app->response->statusCode ;?></h1>
       <h2 class="error__subtitle"><?=$message; ?></h2>
       <ul class="error__list">
         <li class="error__item">
