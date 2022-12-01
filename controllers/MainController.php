@@ -47,4 +47,11 @@ class MainController extends Controller
     }
     return $this->render('main-empty.php');
   }
+
+  public function actions()
+  {
+    return [
+      'error' => 'app\src\actions\ErrorAction',
+    ];
+  }
 }
