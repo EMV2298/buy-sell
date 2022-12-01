@@ -77,4 +77,17 @@ class Categories extends \yii\db\ActiveRecord
             ->one();        
         return $randomOffer->offer->image;
     }
+
+    /**
+     * Получить список категорий
+     * @return array список категорий в формате ['id' => 'name']
+     */
+    public static function getCategories(): array
+    {
+        $categories = static::find()
+            ->select('name')
+            ->indexBy('id')
+            ->column();
+        return $categories;
+    }
 }
