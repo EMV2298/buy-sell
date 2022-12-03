@@ -81,7 +81,7 @@ class Offers extends \yii\db\ActiveRecord
      */
     public function getComments()
     {
-        return $this->hasMany(Comments::class, ['offer_id' => 'id']);
+        return $this->hasMany(Comments::class, ['offer_id' => 'id'])->orderBy('id DESC');
     }
 
     /**

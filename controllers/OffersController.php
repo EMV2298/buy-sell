@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Comments;
 use app\models\form\Comment;
 use app\models\form\Offer;
 use app\models\OfferCategories;
@@ -11,21 +12,72 @@ use app\src\service\UploadFile;
 use Error;
 use Yii;
 use yii\base\Controller;
+use yii\base\Model;
+use yii\filters\AccessControl;
+use yii\web\NotFoundHttpException;
+use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
 
 class OffersController extends Controller
 {
+  public function behaviors()
+  {
+      return [
+          'access' => [
+              'class' => AccessControl::class,
+              'rules' => [
+                  [
+                    'actions' => ['index'],
+                    'allow' => true,
+                    'roles' => ['?', '@']
+                  ],
+                  [
+                      'actions' => ['add'],
+                      'allow' => true,
+                      'roles' => ['createOffer']
+                  ],
+                  [
+                    'actions' => ['edit'],
+                    'allow' => true,
+                    'roles' => ['controlOffer']
+                  ],
+              ],
+          ],
+      ];
+  }
+
   public function actionIndex()
   {
+    
     $id = Yii::$app->request->get('id');
 
     $offer = Offers::findOne($id);
 
     $model = new Comment();
 
+    if(Yii::$app->request->getIsPost() && Yii::$app->user->getId())
+    {
+      $model->load(Yii::$app->request->post());
+      
+      if($model->validate())
+      {
+        $comment = new Comments();
+        $comment->user_id = Yii::$app->user->getId();
+        $comment->offer_id = $offer->id;
+        $comment->message = $model->message;
+        if ($comment->save())
+        {
+          $model = new Comment();
+        }
+        else
+        {
+          throw new ServerErrorHttpException('Не удалось отправить комментарий');
+        }        
+      }
+    }
 
     if (!$offer) {
-      throw new ErrorSaveExeption('Обьявление не найдено');
+      throw new NotFoundHttpException('Обьявление не найдено');
     }
 
     return $this->render('view-offer.php', ['offer' => $offer, 'model' => $model]);
