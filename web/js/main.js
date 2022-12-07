@@ -62,9 +62,15 @@
 (function() {
   var deletEls = document.querySelectorAll('.js-delete');
   for (var i = 0; i < deletEls.length; i++) {
-    deletEls[i].addEventListener('click', function() {
+    deletEls[i].addEventListener('click', async function() {
       var card = this.closest('.js-card');
-      card.parentNode.removeChild(card);
+      var id = card.querySelector('#id').value;
+      let source = await fetch(`/my/deleteoffer/${id}`);
+      if (source.ok){
+        card.parentNode.removeChild(card);
+      }else{
+        window.location.href = `/my/deleteoffer/${id}`;
+      }      
 
     })
   }

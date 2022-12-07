@@ -56,6 +56,7 @@ $config = [
             'enableStrictParsing' => false,
             'rules' => [                          
                 'offers/<id:\d+>' => 'offers',
+                'my/deleteoffer/<id:\d+>' => 'my/deleteoffer',
                                                                                     
             ],
         ],
