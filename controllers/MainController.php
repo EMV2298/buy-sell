@@ -31,11 +31,7 @@ class MainController extends Controller
     ]);
 
     $categoriesProvider = new ActiveDataProvider([
-      'query' => Categories::find()
-      ->select('id, name, COUNT(offerCategories.category_id) as count')
-      ->join('LEFT JOIN', 'offerCategories', 'offerCategories.category_id = categories.id')    
-      ->groupBy('categories.id')
-      ->having('COUNT(offerCategories.category_id) > 0'),
+      'query' => Categories::getQuery(),
     ]);
 
     if ($newOffersProvider->getCount() > 0)

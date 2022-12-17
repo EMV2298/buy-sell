@@ -57,6 +57,7 @@ $config = [
             'rules' => [                          
                 'offers/<id:\d+>' => 'offers',
                 'my/deleteoffer/<id:\d+>' => 'my/deleteoffer',
+                'offers/category/<id:\d+>' => 'offers/category'
                                                                                     
             ],
         ],

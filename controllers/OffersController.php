@@ -2,17 +2,16 @@
 
 namespace app\controllers;
 
+use app\models\Categories;
 use app\models\Comments;
 use app\models\form\Comment;
 use app\models\form\Offer;
 use app\models\OfferCategories;
 use app\models\Offers;
-use app\src\exeption\ErrorSaveExeption;
 use app\src\service\UploadFile;
-use Error;
 use Yii;
 use yii\base\Controller;
-use yii\base\Model;
+use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
@@ -27,7 +26,7 @@ class OffersController extends Controller
               'class' => AccessControl::class,
               'rules' => [
                   [
-                    'actions' => ['index'],
+                    'actions' => ['index', 'category'],
                     'allow' => true,
                     'roles' => ['?', '@']
                   ],
@@ -113,5 +112,21 @@ class OffersController extends Controller
     }
 
     return $this->render('add.php', ['model' => $model]);
+  }
+
+  public function actionCategory()
+  {
+    $pageSize = 1;    
+    $id = Yii::$app->request->get('id');
+
+    $category = Categories::findOne($id);
+    $categories = Categories::getQuery()->all();
+    
+    $offersProvider = new ArrayDataProvider([
+      'allModels' => $category->offers,
+      'pagination' => ['pageSize' => $pageSize ]
+      ]);
+
+    return $this->render('category.php', ['offersProvider' => $offersProvider, 'name' => $category->name, 'categories' => $categories]);
   }
 }

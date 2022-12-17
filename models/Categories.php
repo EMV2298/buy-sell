@@ -90,4 +90,13 @@ class Categories extends \yii\db\ActiveRecord
             ->column();
         return $categories;
     }
+
+    public static function getQuery()
+    {
+        return Categories::find()
+            ->select('id, name, COUNT(offerCategories.category_id) as count')
+            ->join('LEFT JOIN', 'offerCategories', 'offerCategories.category_id = categories.id')    
+            ->groupBy('categories.id')
+            ->having('COUNT(offerCategories.category_id) > 0');
+    }
 }
