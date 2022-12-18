@@ -16,7 +16,6 @@ class MainController extends Controller
 
   public function actionIndex()
   {
-    Yii::$app->authManager->createRole('jhsjd');
     $newOffersProvider = new ActiveDataProvider([
       'query' => Offers::find()->orderBy('id DESC')->limit(self::LIMIT_OFFERS),
     ]);

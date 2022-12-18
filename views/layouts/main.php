@@ -43,8 +43,8 @@ $user = Yii::$app->user->getIdentity();
       </ul>
     </nav>
     <?php endif; ?>
-    <form class="search" method="get" action="#" autocomplete="off">
-      <input type="search" name="query" placeholder="Поиск" aria-label="Поиск">
+    <form class="search" method="get" action="/search" autocomplete="off">
+      <input type="search" name="query" placeholder="Поиск" aria-label="Поиск" value="<?=Yii::$app->request->get('query') ?? '';?>">
       <div class="search__icon"></div>
       <div class="search__close-btn"></div>
     </form>
