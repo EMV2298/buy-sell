@@ -76,6 +76,23 @@
   }
 })();
 
+(function() {
+  var deletEls = document.querySelectorAll('.js-delete-comment');
+  for (var i = 0; i < deletEls.length; i++) {
+    deletEls[i].addEventListener('click', async function() {
+      var card = this.closest('.js-card');
+      var id = card.querySelector('#id').value;
+      let source = await fetch(`/my/deletecomment/${id}`);
+      if (source.ok){
+        card.parentNode.removeChild(card);
+      }else{
+        window.location.href = `/my/deletecomment/${id}`;
+      }      
+
+    })
+  }
+})();
+
 'use strict';
 
 (function () {

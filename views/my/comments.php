@@ -1,5 +1,23 @@
+<?php
+
+use yii\widgets\ListView;
+
+?>
 <main class="page-content">
-  <section class="comments">
+<?=ListView::widget([
+          'dataProvider' => $offersProvider, 
+          'options' => [
+            'tag' => 'section',
+            'class' => 'comments',
+          ],
+          'summary' => false,        
+          'itemView' => '/_list_offer_comments',
+          'itemOptions' => ['tag' => false],
+          'layout' => '<div class="comments__wrapper"><h1 class="visually-hidden">Страница комментариев</h1>{items}</div>',
+
+        ]);
+      ?> 
+  <!-- <section class="comments">
     <div class="comments__wrapper">
       <h1 class="visually-hidden">Страница комментариев</h1>
       <div class="comments__block">
@@ -113,5 +131,5 @@
         </ul>
       </div>
     </div>
-  </section>
+  </section> -->
 </main>

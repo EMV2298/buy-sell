@@ -2,6 +2,7 @@
 
 namespace app\rbac;
 
+use app\models\Comments;
 use app\models\Offers;
 use Yii;
 use yii\rbac\Rule;
@@ -17,6 +18,13 @@ class AuthorRule extends Rule
     {
       return true;
     }
+
+    $comment = Comments::findOne(Yii::$app->request->get('cid'));
+    if ($comment && $comment->offer->user_id === $user)
+    {
+      return true;
+    }
+
     return false;
   }
 }

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Comments;
 use app\models\Offers;
 use Yii;
 use yii\base\Controller;
@@ -46,13 +47,27 @@ class MyController extends Controller
 
   public function actionComments()
   {
-    
-    return $this->render('comments.php');
+    $offersProvider = new ActiveDataProvider([
+      'query' => Offers::find()
+      ->join('LEFT JOIN', 'comments', 'comments.offer_id = offers.id') 
+      ->where(['offers.user_id' => Yii::$app->user->getId()])   
+      ->groupBy('offers.id')
+      ->having('MAX(comments.id) > 0')
+      ->orderBy('MAX(comments.id) DESC'),
+    ]);
+
+    return $this->render('comments.php', ['offersProvider' => $offersProvider]);
   }
 
   public function actionDeletecomment()
   {
-
+    $id = Yii::$app->request->get('cid');
+    $comment = Comments::findOne($id);
+    if ($comment->delete())
+    {
+      return true;        
+    }
+    throw new ServerErrorHttpException('Ошибка сервера');
   }
 
   public function actionDeleteoffer()
