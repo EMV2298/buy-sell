@@ -59,7 +59,8 @@ $config = [
                 'my/deleteoffer/<id:\d+>' => 'my/deleteoffer',
                 'my/deletecomment/<cid:\d+>' => 'my/deletecomment',
                 'offers/category/<id:\d+>' => 'offers/category',
-                'search/<query:\.*>' => 'search'
+                'search/<query:\.*>' => 'search',
+                'offers/edit/<id:\d+>' => 'offers/edit',
                                                                                     
             ],
         ],

@@ -67,4 +67,14 @@ class OfferCategories extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Offers::class, ['id' => 'offer_id']);
     }
+
+    public static function getOfferCategoriesId($offer_id)
+    {
+        $categories = static::find()
+        ->select('category_id')
+        ->where(['offer_id' => $offer_id])
+        ->orderBy('category_id')
+        ->column();
+        return $categories;
+    }
 }

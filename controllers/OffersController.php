@@ -21,57 +21,52 @@ class OffersController extends Controller
 {
   public function behaviors()
   {
-      return [
-          'access' => [
-              'class' => AccessControl::class,
-              'rules' => [
-                  [
-                    'actions' => ['index', 'category'],
-                    'allow' => true,
-                    'roles' => ['?', '@']
-                  ],
-                  [
-                      'actions' => ['add'],
-                      'allow' => true,
-                      'roles' => ['createOffer']
-                  ],
-                  [
-                    'actions' => ['edit'],
-                    'allow' => true,
-                    'roles' => ['controlOffer']
-                  ],
-              ],
+    return [
+      'access' => [
+        'class' => AccessControl::class,
+        'rules' => [
+          [
+            'actions' => ['index', 'category'],
+            'allow' => true,
+            'roles' => ['?', '@']
           ],
-      ];
+          [
+            'actions' => ['add'],
+            'allow' => true,
+            'roles' => ['createOffer']
+          ],
+          [
+            'actions' => ['edit'],
+            'allow' => true,
+            'roles' => ['controlOffer']
+          ],
+        ],
+      ],
+    ];
   }
 
   public function actionIndex()
   {
-    
+
     $id = Yii::$app->request->get('id');
 
     $offer = Offers::findOne($id);
 
     $model = new Comment();
 
-    if(Yii::$app->request->getIsPost() && Yii::$app->user->getId())
-    {
+    if (Yii::$app->request->getIsPost() && Yii::$app->user->getId()) {
       $model->load(Yii::$app->request->post());
-      
-      if($model->validate())
-      {
+
+      if ($model->validate()) {
         $comment = new Comments();
         $comment->user_id = Yii::$app->user->getId();
         $comment->offer_id = $offer->id;
         $comment->message = $model->message;
-        if ($comment->save())
-        {
+        if ($comment->save()) {
           $model = new Comment();
-        }
-        else
-        {
+        } else {
           throw new ServerErrorHttpException('Не удалось отправить комментарий');
-        }        
+        }
       }
     }
 
@@ -116,17 +111,72 @@ class OffersController extends Controller
 
   public function actionCategory()
   {
-    $pageSize = 1;    
+    $pageSize = 1;
     $id = Yii::$app->request->get('id');
 
     $category = Categories::findOne($id);
     $categories = Categories::getQuery()->all();
-    
+
     $offersProvider = new ArrayDataProvider([
       'allModels' => $category->offers,
-      'pagination' => ['pageSize' => $pageSize ]
-      ]);
+      'pagination' => ['pageSize' => $pageSize]
+    ]);
 
     return $this->render('category.php', ['offersProvider' => $offersProvider, 'name' => $category->name, 'categories' => $categories]);
+  }
+
+  public function actionEdit()
+  {
+    $id = Yii::$app->request->get('id');
+    $offer = Offers::findOne($id);
+    $model = new Offer();
+    $categories = OfferCategories::getOfferCategoriesId($offer->id);
+
+    $values = [
+      'title' => $offer->title,
+      'description' => $offer->description,
+      'price' => $offer->price,
+      'categories' => $categories,
+      'type' => $offer->type,
+    ];
+    $model->setAttributes($values);
+
+    if (Yii::$app->request->getIsPost()) {
+      $model->load(Yii::$app->request->post());
+      $model->image = UploadedFile::getInstance($model, 'image');
+
+      if ($model->validate()) {
+        $offer->title = $model->title;
+        $offer->description = $model->description;
+        $offer->price = $model->price;
+        $offer->type = $model->type;        
+        if ($model->image)
+        {
+          $offer->image = UploadFile::upload($model->image, 'offer');
+        }
+        $offer->save();
+
+
+        if (count($model->categories) > 0) {
+          foreach ($offer->offerCategories as $category) {
+            if (!in_array($category->category_id, $model->categories)) {
+              $category->delete();
+            }
+          }
+          $categories = OfferCategories::getOfferCategoriesId($offer->id);
+          foreach ($model->categories as $category) {
+            if (!in_array($category, $categories)) {
+              $newCategory = new OfferCategories();
+              $newCategory->offer_id = $offer->id;
+              $newCategory->category_id = $category;
+              $newCategory->save();
+            }
+          }
+        }
+      }
+    }
+
+
+    return $this->render('edit.php', ['model' => $model, 'offerImage' => $offer->image]);
   }
 }

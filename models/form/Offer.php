@@ -2,7 +2,9 @@
 
 namespace app\models\form;
 
+use app\models\Offers;
 use app\src\logic\Offer as LogicOffer;
+use Yii;
 use yii\base\Model;
 
 class Offer extends Model
@@ -34,14 +36,23 @@ class Offer extends Model
   {
     return [
       [['title', 'description', 'price'], 'required'],
-      ['image', 'required', 'message' => 'Добавьте фото'],
       ['type', 'required', 'message' => 'Выберите тип'],
       ['categories', 'required', 'message' => 'Выберите категории'],
       ['title', 'string', 'min' => self::TITLE_MIN_LENGTH, 'max' => self::TITLE_MAX_LENGTH],
       ['description', 'string', 'min' => self::DESCRIPTION_MIN_LENGTH, 'max' => self::DESCRIPTION_MAX_LENGTH],
       ['price', 'number', 'min' => self::MIN_PRICE],
       ['type', 'in', 'range' => [LogicOffer::OFFER_TYPE_BUY, LogicOffer::OFFER_TYPE_SELL]],
+      [['image'], 'validateImage', 'skipOnEmpty' => false],
       ['image', 'image', 'extensions' => 'png, jpg'],
     ];
+  }
+
+  public function validateImage()
+  {
+    $offer = Offers::findOne(Yii::$app->request->get('id'));
+    if(!$offer && !$this->image )
+    {
+      $this->addError('image', 'Добавьте фото');
+    }
   }
 }
