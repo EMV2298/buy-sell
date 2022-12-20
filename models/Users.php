@@ -15,7 +15,6 @@ use yii\web\IdentityInterface;
  * @property string $email
  * @property string|null $password
  * @property string $avatar
- * @property int|null $admin
  *
  * @property Comments[] $comments
  * @property Offers[] $offers
@@ -36,10 +35,8 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['dt_add'], 'safe'],
             [['username', 'email', 'avatar'], 'required'],
-            [['admin'], 'integer'],
-            [['vk_id', 'username', 'email', 'password', 'avatar'], 'string', 'max' => 128],
+            [['username', 'email', 'password', 'avatar'], 'string', 'max' => 128],
             [['email'], 'unique'],
         ];
     }

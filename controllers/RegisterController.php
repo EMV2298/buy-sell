@@ -8,6 +8,7 @@ use app\src\exeption\ErrorSaveExeption;
 use app\src\service\UploadFile;
 use Yii;
 use yii\base\Controller;
+use yii\rbac\DbManager;
 use yii\web\UploadedFile;
 
 class RegisterController extends Controller
@@ -28,6 +29,10 @@ class RegisterController extends Controller
         $user->avatar = UploadFile::upload($model->avatar, 'avatar');
         if ($user->save())
         {
+          $auth = new DbManager();
+          $role = $auth->getRole('user');
+          $auth->assign($role, $user->id);
+          
           return Yii::$app->response->redirect('login');
         }
         throw new ErrorSaveExeption('Не удалось сохранить');

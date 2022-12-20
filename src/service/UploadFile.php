@@ -24,4 +24,16 @@ class UploadFile
     throw new ErrorSaveExeption("Не удалось сохранить файл");
 
   }
+
+       /**
+     * Загружает файлы на сервер
+     * @param string $filesUrl Url файла для загрузки
+     * @return string Возвращает имя загруженного файла
+     */
+    public static function uploadUrlAvatar(string $filesUrl): string
+    {
+        $name = uniqid() . '.png';
+
+        return file_put_contents("uploads/avatar/{$name}", file_get_contents($filesUrl)) ? $name : '';
+    }
 }
