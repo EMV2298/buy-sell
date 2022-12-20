@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
         echo $form->field($model, 'password')->input('password', ['class' => 'js-field']);        
         ?>        
         <button class="login__button btn btn--medium js-button" type="submit" disabled="">Войти</button>
-        <a class="btn btn--small btn--flex btn--white" href="#">
+        <a class="btn btn--small btn--flex btn--white" href="<?=Yii::$app->urlManager->createUrl('/login/vk'); ?>">
           Войти через
           <span class="icon icon--vk"></span>
         </a>
