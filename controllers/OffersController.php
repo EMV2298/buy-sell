@@ -14,6 +14,7 @@ use Kreait\Firebase\Factory;
 use Yii;
 use yii\base\Controller;
 use yii\data\ArrayDataProvider;
+use yii\db\Connection;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
@@ -86,27 +87,47 @@ class OffersController extends Controller
     if (Yii::$app->request->getIsPost()) {
       $model->load(Yii::$app->request->post());
       $model->image = UploadedFile::getInstance($model, 'image');
+      
 
       if ($model->validate()) {
-        $offer = new Offers();
-        $offer->user_id = Yii::$app->user->getId();
-        $offer->title = $model->title;
-        $offer->description = $model->description;
-        $offer->price = $model->price;
-        $offer->type = $model->type;
-        $offer->image = UploadFile::upload($model->image, 'offer');
 
-        if ($offer->save()) {
-          foreach ($model->categories as $category) {
-            $offerCaterory = new OfferCategories();
-            $offerCaterory->offer_id = $offer->id;
-            $offerCaterory->category_id = $category;
-            $offerCaterory->save();
+        $transaction = Yii::$app->db->beginTransaction();
+        $image = UploadFile::upload($model->image, 'offer');
+
+        try {
+
+          $offer = new Offers();
+          $offer->user_id = Yii::$app->user->getId();
+          $offer->title = $model->title;
+          $offer->description = $model->description;
+          $offer->price = $model->price;
+          $offer->type = $model->type;
+          $offer->image = $image;
+          if (!$offer->save()){
+            throw new ServerErrorHttpException('Не удалось сохранить обьявление');
           }
-          return Yii::$app->response->redirect("/offers/{$offer->id}");
-        }
+            
+          foreach ($model->categories as $category) {
+              $offerCaterory = new OfferCategories();
+              $offerCaterory->offer_id = '45';
+              $offerCaterory->category_id = $category;
+              if (!$offerCaterory->save()){
+                throw new ServerErrorHttpException('Не удалось сохранить обьявление');
+              }
+            }
+          
+          $transaction->commit();
+
+          return Yii::$app->response->redirect("/offers/{$offer->id}");       
+
+      }catch(\Exception $e){
+
+        $transaction->rollBack();
+        UploadFile::deleteFile($image, 'offer');
+        throw $e;
       }
     }
+  }
 
     return $this->render('add.php', ['model' => $model]);
   }

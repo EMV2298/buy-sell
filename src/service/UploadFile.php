@@ -17,23 +17,33 @@ class UploadFile
   {
     $name = uniqid() . '.' . $file->getExtension();
 
-    if ($file->saveAs("@webroot/uploads/{$folder}/" . $name))
-    {
+    if ($file->saveAs("@webroot/uploads/{$folder}/" . $name)) {
       return $name;
     }
     throw new ErrorSaveExeption("Не удалось сохранить файл");
-
   }
 
-       /**
-     * Загружает файлы на сервер
-     * @param string $filesUrl Url файла для загрузки
-     * @return string Возвращает имя загруженного файла
-     */
-    public static function uploadUrlAvatar(string $filesUrl): string
-    {
-        $name = uniqid() . '.png';
+  /**
+   * Загружает файлы на сервер
+   * @param string $filesUrl Url файла для загрузки
+   * @return string Возвращает имя загруженного файла
+   */
+  public static function uploadUrlAvatar(string $filesUrl): string
+  {
+    $name = uniqid() . '.png';
 
-        return file_put_contents("uploads/avatar/{$name}", file_get_contents($filesUrl)) ? $name : '';
-    }
+    return file_put_contents("uploads/avatar/{$name}", file_get_contents($filesUrl)) ? $name : '';
+  }
+
+  /**
+   * Удаляет файлы
+   * @param string $fileName Имя файла
+   * @param string $folder Имя папки в директории Uploads
+   * @return bool статус выполнения
+   */
+  public static function deleteFile(string $fileName, string $folder): bool
+  {    
+    return unlink("uploads/{$folder}/{$fileName}");
+  
+  }
 }

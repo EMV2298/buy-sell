@@ -9,6 +9,7 @@ use app\src\service\UploadFile;
 use Yii;
 use yii\base\Controller;
 use yii\rbac\DbManager;
+use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
 
 class RegisterController extends Controller
@@ -20,22 +21,37 @@ class RegisterController extends Controller
     {
       $model->load(Yii::$app->request->post());
       $model->avatar = UploadedFile::getInstance($model, 'avatar');
+
       if ($model->validate())
       {
-        $user = new Users();
-        $user->username = $model->username;
-        $user->email = $model->email;
-        $user->password = Yii::$app->getSecurity()->generatePasswordHash($model->password);
-        $user->avatar = UploadFile::upload($model->avatar, 'avatar');
-        if ($user->save())
-        {
-          $auth = new DbManager();
-          $role = $auth->getRole('user');
-          $auth->assign($role, $user->id);
+        $transaction = Yii::$app->db->beginTransaction();
+        $avatar = UploadFile::upload($model->avatar, 'avatar');
+        try{
+          $user = new Users();
+          $user->username = $model->username;
+          $user->email = $model->email;
+          $user->password = Yii::$app->getSecurity()->generatePasswordHash($model->password);
+          $user->avatar = $avatar;
+          if (!$user->save()){
+            throw new ServerErrorHttpException('Не удалось сохранить данные');
+          }
           
-          return Yii::$app->response->redirect('login');
+            $auth = new DbManager();
+            $role = $auth->getRole('user');
+            if (!$auth->assign($role, $user->id))
+            {
+              throw new ServerErrorHttpException('Не удалось сохранить данные');
+            }
+
+            $transaction->commit();
+            
+            return Yii::$app->response->redirect('login');
+          
+          
+        }catch(\Exception $e){
+          UploadFile::deleteFile($avatar, 'avatar');
+          throw $e;
         }
-        throw new ErrorSaveExeption('Не удалось сохранить');
       }
     }
     return $this->render('register.php', ['model' => $model]);
