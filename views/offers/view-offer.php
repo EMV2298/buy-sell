@@ -116,7 +116,9 @@ use yii\widgets\ActiveForm;
           </div>
         <?php endif; ?>
       </div>
+      <?php if (Yii::$app->user->getId()): ?>
       <button class="chat-button" type="button" aria-label="Открыть окно чата"></button>
+      <?php endif; ?>
     </div>
   </section>
   <?php if (Yii::$app->user->can('controlOffer')) : ?>
@@ -150,7 +152,7 @@ use yii\widgets\ActiveForm;
         </form>
       </div>
     </section>
-  <?php else : ?>
+  <?php elseif(Yii::$app->user->getId()) : ?>
     <section class="chat visually-hidden">
       <h2 class="chat__subtitle">Чат с продавцом</h2>
       <ul class="chat__conversation">
@@ -163,6 +165,7 @@ use yii\widgets\ActiveForm;
       </form>
     </section>
   <?php endif; ?>
+  <?php if (Yii::$app->user->getId()): ?>
   <script type="module">
     import {
       initializeApp
@@ -394,5 +397,5 @@ use yii\widgets\ActiveForm;
       }
     });
   </script>
-  <script type="module" src="/js/chat.js"></script>
+  <?php endif; ?>
 </main>
