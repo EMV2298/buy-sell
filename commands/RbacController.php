@@ -2,6 +2,7 @@
 
 namespace app\commands;
 
+use app\models\Users;
 use app\rbac\AuthorRule;
 use Yii;
 use yii\console\Controller;
@@ -41,5 +42,13 @@ class RbacController extends Controller
         $auth->addChild($controlOwnOffer, $controlOffer);
         $auth->addChild($user, $controlOwnOffer);
         $auth->addChild($admin, $user);
+
+        $setAdmin = new Users();
+        $setAdmin->username = 'Админ';
+        $setAdmin->email = 'admin@buysell.ru';
+        $setAdmin->password = '$2y$13$vM2qRkJlpP7kve/O424R5eDZOuF6NDdUyyMRyjQOMgjHODZav5dbK';
+        $setAdmin->avatar = 'admin.jpg';
+        $setAdmin->save();
+        $auth->assign($admin, $setAdmin->id);
     }
 }
