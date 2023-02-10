@@ -38,10 +38,10 @@ $config = [
             'viewPath' => '@app/mail',
             'transport' => [
                 'scheme' => 'smtps',
-                'host' => 'smtp.gmail.com',
-                'username' => 'emv2298@gmail.com',
-                'password' => 'mumvwsdqvqymfabo',
-                'port' => '587',
+                'host' => '',
+                'username' => '',
+                'password' => '',
+                'port' => '',
                                 
             ],
             // send all mails to a file by default.
