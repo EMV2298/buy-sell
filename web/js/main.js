@@ -19,8 +19,7 @@
   if (chat && buttonToOpenChat && pageFooter) {
     var userChatField = chat.querySelector('[name="chat-message"]');
 
-    document.addEventListener('click', function (evt) {
-      evt.preventDefault();
+    document.addEventListener('click', function (evt) {      
       if (evt.target === buttonToOpenChat) {
         evt.preventDefault();
         openChat();

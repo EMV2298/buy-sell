@@ -34,10 +34,18 @@ $config = [
             'errorAction' => 'main/error',
         ],
         'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
+            'class' => 'yii\symfonymailer\Mailer',
             'viewPath' => '@app/mail',
+            'transport' => [
+                'scheme' => 'smtps',
+                'host' => 'smtp.gmail.com',
+                'username' => 'emv2298@gmail.com',
+                'password' => 'mumvwsdqvqymfabo',
+                'port' => '587',
+                                
+            ],
             // send all mails to a file by default.
-            'useFileTransport' => true,
+            'useFileTransport' =>  true,
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -61,6 +69,7 @@ $config = [
                 'offers/category/<id:\d+>' => 'offers/category',
                 'search/<query:\.*>' => 'search',
                 'offers/edit/<id:\d+>' => 'offers/edit',
+                'sendemail/<to:\d+>' => 'sendemail'
                                                                                     
             ],
         ],

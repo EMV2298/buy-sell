@@ -15,7 +15,9 @@ use yii\helpers\Html;
 </head>
 <body>
     <?php $this->beginBody() ?>
-    <?= $content ?>
+    <main>
+        <h2>Новое сообщение</h2>
+    </main>
     <?php $this->endBody() ?>
 </body>
 </html>
