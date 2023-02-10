@@ -20,7 +20,6 @@ class m221125_145945_insert_users extends Migration
             ("Екатерина Павлова", "katya@mail.ru", "avatar4.jpg"),
             ("Мария Хан", "mary@mail.ru", "avatar5.jpeg");'
         );
-
     }
 
     /**

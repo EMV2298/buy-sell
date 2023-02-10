@@ -6,7 +6,6 @@ use yii\web\ErrorAction as WebErrorAction;
 
 class ErrorAction extends WebErrorAction
 {
-  public $view = 'error.php';
-  public $layout = 'error.php';
-
+    public $view = 'error.php';
+    public $layout = 'error.php';
 }

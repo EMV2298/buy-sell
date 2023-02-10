@@ -66,15 +66,15 @@ class Categories extends \yii\db\ActiveRecord
     }
 
     /**
-     * Получить случайное изображение для категории     
+     * Получить случайное изображение для категории
      * @return string имя файла в директории uploads/offer
      */
     public function getRandomImage(): string
     {
         $randomOffer = OfferCategories::find()
             ->where(['category_id' => $this->id])
-            ->orderBy('rand()')            
-            ->one();        
+            ->orderBy('rand()')
+            ->one();
         return $randomOffer->offer->image;
     }
 
@@ -95,7 +95,7 @@ class Categories extends \yii\db\ActiveRecord
     {
         return Categories::find()
             ->select('id, name, COUNT(offerCategories.category_id) as count')
-            ->join('LEFT JOIN', 'offerCategories', 'offerCategories.category_id = categories.id')    
+            ->join('LEFT JOIN', 'offerCategories', 'offerCategories.category_id = categories.id')
             ->groupBy('categories.id')
             ->having('COUNT(offerCategories.category_id) > 0');
     }

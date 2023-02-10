@@ -9,18 +9,18 @@ use yii\data\ActiveDataProvider;
 
 class SearchController extends Controller
 {
-  public function actionIndex()
-  {
-    $query = Yii::$app->request->get('query');
+    public function actionIndex()
+    {
+        $query = Yii::$app->request->get('query');
 
-    $searchProvider = new ActiveDataProvider([
-      'query' => Offers::find()->where("MATCH(title) AGAINST('{$query}')")
-    ]);
+        $searchProvider = new ActiveDataProvider([
+          'query' => Offers::find()->where("MATCH(title) AGAINST('{$query}')")
+        ]);
 
-    $newOffersProvider = new ActiveDataProvider([
-      'query' => Offers::find()->orderBy('id DESC')->limit(8),
-    ]);
-    
-    return $this->render('search.php', ['searchProvider' => $searchProvider, 'newOffersProvider' => $newOffersProvider]);
-  }
+        $newOffersProvider = new ActiveDataProvider([
+          'query' => Offers::find()->orderBy('id DESC')->limit(8),
+        ]);
+
+        return $this->render('search.php', ['searchProvider' => $searchProvider, 'newOffersProvider' => $newOffersProvider]);
+    }
 }

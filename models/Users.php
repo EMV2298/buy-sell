@@ -101,5 +101,5 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     public function validateAuthKey($authKey)
     {
         // TODO: Implement validateAuthKey() method.
-    } 
+    }
 }

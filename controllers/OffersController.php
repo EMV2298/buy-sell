@@ -22,184 +22,178 @@ use yii\web\UploadedFile;
 
 class OffersController extends Controller
 {
-  public function behaviors()
-  {
-    return [
-      'access' => [
-        'class' => AccessControl::class,
-        'rules' => [
-          [
-            'actions' => ['index', 'category'],
-            'allow' => true,
-            'roles' => ['?', '@']
+    public function behaviors()
+    {
+        return [
+          'access' => [
+            'class' => AccessControl::class,
+            'rules' => [
+              [
+                'actions' => ['index', 'category'],
+                'allow' => true,
+                'roles' => ['?', '@']
+              ],
+              [
+                'actions' => ['add'],
+                'allow' => true,
+                'roles' => ['createOffer']
+              ],
+              [
+                'actions' => ['edit'],
+                'allow' => true,
+                'roles' => ['controlOffer']
+              ],
+            ],
           ],
-          [
-            'actions' => ['add'],
-            'allow' => true,
-            'roles' => ['createOffer']
-          ],
-          [
-            'actions' => ['edit'],
-            'allow' => true,
-            'roles' => ['controlOffer']
-          ],
-        ],
-      ],
-    ];
-  }
-
-  public function actionIndex()
-  {
-
-    $id = Yii::$app->request->get('id');
-
-    $offer = Offers::findOne($id);
-
-    $model = new Comment();
-
-    if (Yii::$app->request->getIsPost() && Yii::$app->user->getId()) {
-      $model->load(Yii::$app->request->post());
-
-      if ($model->validate()) {
-        $comment = new Comments();
-        $comment->user_id = Yii::$app->user->getId();
-        $comment->offer_id = $offer->id;
-        $comment->message = $model->message;
-        if ($comment->save()) {
-          $model = new Comment();
-        } else {
-          throw new ServerErrorHttpException('Не удалось отправить комментарий');
-        }
-      }
+        ];
     }
 
-    if (!$offer) {
-      throw new NotFoundHttpException('Обьявление не найдено');
-    }
+    public function actionIndex()
+    {
+        $id = Yii::$app->request->get('id');
 
-    return $this->render('view-offer.php', ['offer' => $offer, 'model' => $model]);
-  }
+        $offer = Offers::findOne($id);
 
-  public function actionAdd()
-  {
-    $model = new Offer();
+        $model = new Comment();
 
-    if (Yii::$app->request->getIsPost()) {
-      $model->load(Yii::$app->request->post());
-      $model->image = UploadedFile::getInstance($model, 'image');
-      
+        if (Yii::$app->request->getIsPost() && Yii::$app->user->getId()) {
+            $model->load(Yii::$app->request->post());
 
-      if ($model->validate()) {
-
-        $transaction = Yii::$app->db->beginTransaction();
-        $image = UploadFile::upload($model->image, 'offer');
-
-        try {
-
-          $offer = new Offers();
-          $offer->user_id = Yii::$app->user->getId();
-          $offer->title = $model->title;
-          $offer->description = $model->description;
-          $offer->price = $model->price;
-          $offer->type = $model->type;
-          $offer->image = $image;
-          if (!$offer->save()){
-            throw new ServerErrorHttpException('Не удалось сохранить обьявление');
-          }
-            
-          foreach ($model->categories as $category) {
-              $offerCaterory = new OfferCategories();
-              $offerCaterory->offer_id = '45';
-              $offerCaterory->category_id = $category;
-              if (!$offerCaterory->save()){
-                throw new ServerErrorHttpException('Не удалось сохранить обьявление');
-              }
+            if ($model->validate()) {
+                $comment = new Comments();
+                $comment->user_id = Yii::$app->user->getId();
+                $comment->offer_id = $offer->id;
+                $comment->message = $model->message;
+                if ($comment->save()) {
+                    $model = new Comment();
+                } else {
+                    throw new ServerErrorHttpException('Не удалось отправить комментарий');
+                }
             }
-          
-          $transaction->commit();
-
-          return Yii::$app->response->redirect("/offers/{$offer->id}");       
-
-      }catch(\Exception $e){
-
-        $transaction->rollBack();
-        UploadFile::deleteFile($image, 'offer');
-        throw $e;
-      }
-    }
-  }
-
-    return $this->render('add.php', ['model' => $model]);
-  }
-
-  public function actionCategory()
-  {
-    $pageSize = 1;
-    $id = Yii::$app->request->get('id');
-
-    $category = Categories::findOne($id);
-    $categories = Categories::getQuery()->all();
-
-    $offersProvider = new ArrayDataProvider([
-      'allModels' => $category->offers,
-      'pagination' => ['pageSize' => $pageSize]
-    ]);
-
-    return $this->render('category.php', ['offersProvider' => $offersProvider, 'name' => $category->name, 'categories' => $categories]);
-  }
-
-  public function actionEdit()
-  {
-    $id = Yii::$app->request->get('id');
-    $offer = Offers::findOne($id);
-    $model = new Offer();
-    $categories = OfferCategories::getOfferCategoriesId($offer->id);
-
-    $values = [
-      'title' => $offer->title,
-      'description' => $offer->description,
-      'price' => $offer->price,
-      'categories' => $categories,
-      'type' => $offer->type,
-    ];
-    $model->setAttributes($values);
-
-    if (Yii::$app->request->getIsPost()) {
-      $model->load(Yii::$app->request->post());
-      $model->image = UploadedFile::getInstance($model, 'image');
-
-      if ($model->validate()) {
-        $offer->title = $model->title;
-        $offer->description = $model->description;
-        $offer->price = $model->price;
-        $offer->type = $model->type;        
-        if ($model->image)
-        {
-          $offer->image = UploadFile::upload($model->image, 'offer');
         }
-        $offer->save();
 
-
-        if (count($model->categories) > 0) {
-          foreach ($offer->offerCategories as $category) {
-            if (!in_array($category->category_id, $model->categories)) {
-              $category->delete();
-            }
-          }
-          $categories = OfferCategories::getOfferCategoriesId($offer->id);
-          foreach ($model->categories as $category) {
-            if (!in_array($category, $categories)) {
-              $newCategory = new OfferCategories();
-              $newCategory->offer_id = $offer->id;
-              $newCategory->category_id = $category;
-              $newCategory->save();
-            }
-          }
+        if (!$offer) {
+            throw new NotFoundHttpException('Обьявление не найдено');
         }
-      }
+
+        return $this->render('view-offer.php', ['offer' => $offer, 'model' => $model]);
     }
 
+    public function actionAdd()
+    {
+        $model = new Offer();
 
-    return $this->render('edit.php', ['model' => $model, 'offerImage' => $offer->image]);
-  }
+        if (Yii::$app->request->getIsPost()) {
+            $model->load(Yii::$app->request->post());
+            $model->image = UploadedFile::getInstance($model, 'image');
+
+
+            if ($model->validate()) {
+                $transaction = Yii::$app->db->beginTransaction();
+                $image = UploadFile::upload($model->image, 'offer');
+
+                try {
+                    $offer = new Offers();
+                    $offer->user_id = Yii::$app->user->getId();
+                    $offer->title = $model->title;
+                    $offer->description = $model->description;
+                    $offer->price = $model->price;
+                    $offer->type = $model->type;
+                    $offer->image = $image;
+                    if (!$offer->save()) {
+                        throw new ServerErrorHttpException('Не удалось сохранить обьявление');
+                    }
+
+                    foreach ($model->categories as $category) {
+                        $offerCaterory = new OfferCategories();
+                        $offerCaterory->offer_id = '45';
+                        $offerCaterory->category_id = $category;
+                        if (!$offerCaterory->save()) {
+                            throw new ServerErrorHttpException('Не удалось сохранить обьявление');
+                        }
+                    }
+
+                    $transaction->commit();
+
+                    return Yii::$app->response->redirect("/offers/{$offer->id}");
+                } catch(\Exception $e) {
+                    $transaction->rollBack();
+                    UploadFile::deleteFile($image, 'offer');
+                    throw $e;
+                }
+            }
+        }
+
+        return $this->render('add.php', ['model' => $model]);
+    }
+
+    public function actionCategory()
+    {
+        $pageSize = 1;
+        $id = Yii::$app->request->get('id');
+
+        $category = Categories::findOne($id);
+        $categories = Categories::getQuery()->all();
+
+        $offersProvider = new ArrayDataProvider([
+          'allModels' => $category->offers,
+          'pagination' => ['pageSize' => $pageSize]
+        ]);
+
+        return $this->render('category.php', ['offersProvider' => $offersProvider, 'name' => $category->name, 'categories' => $categories]);
+    }
+
+    public function actionEdit()
+    {
+        $id = Yii::$app->request->get('id');
+        $offer = Offers::findOne($id);
+        $model = new Offer();
+        $categories = OfferCategories::getOfferCategoriesId($offer->id);
+
+        $values = [
+          'title' => $offer->title,
+          'description' => $offer->description,
+          'price' => $offer->price,
+          'categories' => $categories,
+          'type' => $offer->type,
+        ];
+        $model->setAttributes($values);
+
+        if (Yii::$app->request->getIsPost()) {
+            $model->load(Yii::$app->request->post());
+            $model->image = UploadedFile::getInstance($model, 'image');
+
+            if ($model->validate()) {
+                $offer->title = $model->title;
+                $offer->description = $model->description;
+                $offer->price = $model->price;
+                $offer->type = $model->type;
+                if ($model->image) {
+                    $offer->image = UploadFile::upload($model->image, 'offer');
+                }
+                $offer->save();
+
+
+                if (count($model->categories) > 0) {
+                    foreach ($offer->offerCategories as $category) {
+                        if (!in_array($category->category_id, $model->categories)) {
+                            $category->delete();
+                        }
+                    }
+                    $categories = OfferCategories::getOfferCategoriesId($offer->id);
+                    foreach ($model->categories as $category) {
+                        if (!in_array($category, $categories)) {
+                            $newCategory = new OfferCategories();
+                            $newCategory->offer_id = $offer->id;
+                            $newCategory->category_id = $category;
+                            $newCategory->save();
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return $this->render('edit.php', ['model' => $model, 'offerImage' => $offer->image]);
+    }
 }

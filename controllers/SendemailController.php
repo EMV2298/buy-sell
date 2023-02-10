@@ -10,12 +10,11 @@ class SendemailController extends Controller
 {
     public function actionIndex()
     {
-
         $to = Yii::$app->request->get('to');
 
         $toUser = Users::findOne($to);
 
-        
+
         if ($toUser) {
             $mailer = Yii::$app->mailer;
             $message = $mailer->compose()
@@ -25,9 +24,8 @@ class SendemailController extends Controller
                 ->setTextBody('У вас новое сообщение от пользователя ' . Yii::$app->user->getIdentity()->username)
                 ->send();
 
-                return true;
+            return true;
         }
         return false;
-
     }
 }
