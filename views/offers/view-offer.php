@@ -41,7 +41,7 @@ use yii\widgets\ActiveForm;
           <ul class="ticket__tags">
             <?php foreach ($offer->categories as $category) : ?>
               <li>
-                <a href="#" class="category-tile category-tile--small">
+                <a href="<?= Yii::$app->urlManager->createUrl(['offers/category/', 'id' => $category->id]); ?>" class="category-tile category-tile--small">
                   <span class="category-tile__image">
                     <img src="/uploads/offer/<?= Html::encode($category->randomImage ?? ''); ?>" srcset="img/cat@2x.jpg 2x" alt="Иконка категории">
                   </span>
