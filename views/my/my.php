@@ -16,7 +16,9 @@ use yii\widgets\ListView;
           ],         
           'itemView' => '/_list_my_offer',
           'itemOptions' => ['tag' => false],
-          'layout' => '{items}'
+          'layout' => '{items}',
+          'emptyText' => '<p class="comments__message">У вас еще нет публикаций.</p>',
+          'emptyTextOptions' => ['class' => 'comments__wrapper']
         ]);
       ?>       
     </div>
