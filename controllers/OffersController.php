@@ -106,7 +106,7 @@ class OffersController extends Controller
 
                     foreach ($model->categories as $category) {
                         $offerCaterory = new OfferCategories();
-                        $offerCaterory->offer_id = '45';
+                        $offerCaterory->offer_id = $offer->id;
                         $offerCaterory->category_id = $category;
                         if (!$offerCaterory->save()) {
                             throw new ServerErrorHttpException('Не удалось сохранить обьявление');
