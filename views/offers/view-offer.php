@@ -389,6 +389,7 @@ use yii\widgets\ActiveForm;
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <script>
     $(".new-chat__dialog-close").on('click', function(e) {
+      $('.chat__conversation').empty();
       let _this = $(this);
       let parent = _this.parent('.new-chat__dialog');
 
