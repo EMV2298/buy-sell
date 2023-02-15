@@ -5,9 +5,25 @@ namespace app\controllers;
 use app\models\Users;
 use Yii;
 use yii\base\Controller;
+use yii\filters\AccessControl;
 
 class SendemailController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                      'allow' => true,
+                      'roles' => ['@']
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $to = Yii::$app->request->get('to');
