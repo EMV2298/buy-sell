@@ -22,28 +22,4 @@ class m221125_151032_insert_offers extends Migration
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeDown()
-    {
-        echo "m221125_151032_insert_offers cannot be reverted.\n";
-
-        return false;
-    }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m221125_151032_insert_offers cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

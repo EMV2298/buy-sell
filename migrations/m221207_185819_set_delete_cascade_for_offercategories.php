@@ -22,28 +22,4 @@ class m221207_185819_set_delete_cascade_for_offercategories extends Migration
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function safeDown()
-    {
-        echo "m221207_185819_set_delete_cascade_for_offercategories cannot be reverted.\n";
-
-        return false;
-    }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m221207_185819_set_delete_cascade_for_offercategories cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

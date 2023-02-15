@@ -32,18 +32,4 @@ class m221125_145945_insert_users extends Migration
         return false;
     }
 
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m221125_145945_insert_users cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }
