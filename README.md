@@ -6,6 +6,8 @@ INSTALLATION
 2. Выполнить миграции
 ~~~
 php yii migrate
+
+php yii migrate --migrationPath=@yii/rbac/migrations/
 ~~~
 
 3. Выполнить команду "rbac" для установки ролей и доступов
