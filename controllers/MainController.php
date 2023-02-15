@@ -3,12 +3,9 @@
 namespace app\controllers;
 
 use app\models\Categories;
-use app\models\OfferCategories;
 use app\models\Offers;
-use Yii;
 use yii\base\Controller;
 use yii\data\ActiveDataProvider;
-use yii\db\Query;
 
 class MainController extends Controller
 {

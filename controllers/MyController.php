@@ -8,7 +8,6 @@ use Yii;
 use yii\base\Controller;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
-use yii\web\ForbiddenHttpException;
 use yii\web\ServerErrorHttpException;
 
 class MyController extends Controller

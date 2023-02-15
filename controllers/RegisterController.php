@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use app\models\form\Register;
 use app\models\Users;
-use app\src\exeption\ErrorSaveExeption;
 use app\src\service\UploadFile;
 use Yii;
 use yii\base\Controller;
