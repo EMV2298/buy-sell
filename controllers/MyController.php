@@ -61,7 +61,7 @@ class MyController extends Controller
     {
         $id = Yii::$app->request->get('cid');
         $comment = Comments::findOne($id);
-        if ($comment->delete()) {
+        if (isset($comment) && $comment->delete()) {
             return true;
         }
         throw new ServerErrorHttpException('Ошибка сервера');
