@@ -8,6 +8,7 @@ use app\models\form\Comment;
 use app\models\form\Offer;
 use app\models\OfferCategories;
 use app\models\Offers;
+use app\src\factory\OfferFactory;
 use app\src\service\UploadFile;
 use Yii;
 use yii\base\Controller;
@@ -87,38 +88,10 @@ class OffersController extends Controller
 
 
             if ($model->validate()) {
-                $transaction = Yii::$app->db->beginTransaction();
-                $image = UploadFile::upload($model->image, 'offer');
 
-                try {
-                    $offer = new Offers();
-                    $offer->user_id = Yii::$app->user->getId();
-                    $offer->title = $model->title;
-                    $offer->description = $model->description;
-                    $offer->price = $model->price;
-                    $offer->type = $model->type;
-                    $offer->image = $image;
-                    if (!$offer->save()) {
-                        throw new ServerErrorHttpException('Не удалось сохранить обьявление');
-                    }
+                $newOffer = OfferFactory::create($model);
 
-                    foreach ($model->categories as $category) {
-                        $offerCaterory = new OfferCategories();
-                        $offerCaterory->offer_id = $offer->id;
-                        $offerCaterory->category_id = $category;
-                        if (!$offerCaterory->save()) {
-                            throw new ServerErrorHttpException('Не удалось сохранить обьявление');
-                        }
-                    }
-
-                    $transaction->commit();
-
-                    return Yii::$app->response->redirect("/offers/{$offer->id}");
-                } catch(\Exception $e) {
-                    $transaction->rollBack();
-                    UploadFile::deleteFile($image, 'offer');
-                    throw $e;
-                }
+                return Yii::$app->response->redirect("/offers/{$newOffer->id}");
             }
         }
 
@@ -167,50 +140,8 @@ class OffersController extends Controller
             $model->image = UploadedFile::getInstance($model, 'image');
 
             if ($model->validate()) {
-                $transaction = Yii::$app->db->beginTransaction();
-                try {
-                    $offer->title = $model->title;
-                    $offer->description = $model->description;
-                    $offer->price = $model->price;
-                    $offer->type = $model->type;
-
-                    if ($model->image) {
-                        $offer->image = UploadFile::upload($model->image, 'offer');
-                    }
-                    if (!$offer->save())
-                    {
-                        throw new ServerErrorHttpException('Не удалось сохранить обьявление');
-                    }
-    
-    
-                    if (count($model->categories) > 0) {
-                        foreach ($offer->offerCategories as $category) {
-                            if (!in_array($category->category_id, $model->categories)) {
-                                if (!$category->delete())
-                                {
-                                    throw new ServerErrorHttpException('Не удалось сохранить обьявление');
-                                }
-                            }
-                        }
-                        $categories = OfferCategories::getOfferCategoriesId($offer->id);
-                        foreach ($model->categories as $category) {
-                            if (!in_array($category, $categories)) {
-                                $newCategory = new OfferCategories();
-                                $newCategory->offer_id = $offer->id;
-                                $newCategory->category_id = $category;
-                                if ($newCategory->save()) 
-                                {
-                                    throw new ServerErrorHttpException('Не удалось сохранить обьявление');
-                                }
-                            }
-                        }
-                    }
-                    $transaction->commit();
-                    
-                }catch(\Exception $e){
-                    $transaction->rollBack();
-                    throw $e;
-                }
+                
+                OfferFactory::edit($offer, $model);
             }
         }
 
