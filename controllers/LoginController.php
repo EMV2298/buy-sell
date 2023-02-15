@@ -4,11 +4,11 @@ namespace app\controllers;
 
 use app\models\form\Login;
 use app\models\Users;
-use app\src\service\UploadFile;
 use app\src\components\VkoAuth2;
+use app\src\factory\UserFactory;
 use Yii;
 use yii\base\Controller;
-use yii\rbac\DbManager;
+use yii\web\ServerErrorHttpException;
 
 class LoginController extends Controller
 {
@@ -37,6 +37,11 @@ class LoginController extends Controller
         $code = Yii::$app->request->get('code');
         $vkOauth = new VkoAuth2();
         $token = $vkOauth->getToken($code);
+
+        if (!isset($token['email']) || !isset($token['user_id'])){
+            throw new ServerErrorHttpException('Не удалось получить данные');
+        }
+
         $user = Users::findOne(['email' => $token['email']]);
 
         if ($user) {
@@ -49,22 +54,10 @@ class LoginController extends Controller
             Yii::$app->response->redirect(['/']);
         } else {
             $userData = $vkOauth->getUserData($token);
+            $newUser = UserFactory::createVk($userData, $token['email']);
 
-            if ($userData) {
-                $newUser = new Users();
-                $newUser->username = $userData['first_name'] . ' ' . $userData['last_name'];
-                $newUser->email = $token['email'];
-                $newUser->vk_id = $userData['id'];
-                $newUser->avatar = UploadFile::uploadUrlAvatar($userData[VkoAuth2::PHOTO_KEY]);
-
-                if ($newUser->save()) {
-                    $auth = new DbManager();
-                    $role = $auth->getRole('user');
-                    $auth->assign($role, $newUser->id);
-                    Yii::$app->user->login($newUser);
-                    Yii::$app->response->redirect(['/']);
-                }
-            }
+            Yii::$app->user->login($newUser);
+            Yii::$app->response->redirect(['/']);
         }
     }
 }
