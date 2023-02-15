@@ -15,9 +15,14 @@ class UploadFile
      */
     public static function upload(object $file, string $folder): string
     {
+        $dir = "./uploads/{$folder}";
+        if(!is_dir($dir)) {
+             mkdir($dir);
+        }
+
         $name = uniqid() . '.' . $file->getExtension();
 
-        if ($file->saveAs("@webroot/uploads/{$folder}/" . $name)) {
+        if ($file->saveAs($dir . "/" . $name)) {
             return $name;
         }
         throw new ErrorSaveExeption("Не удалось сохранить файл");
@@ -30,9 +35,13 @@ class UploadFile
      */
     public static function uploadUrlAvatar(string $filesUrl): string
     {
+        $dir = "./uploads/avatar";
+        if(!is_dir($dir)) {
+             mkdir($dir);
+        }
         $name = uniqid() . '.png';
 
-        return file_put_contents("uploads/avatar/{$name}", file_get_contents($filesUrl)) ? $name : '';
+        return file_put_contents($dir . "/" . $name, file_get_contents($filesUrl)) ? $name : '';
     }
 
     /**
