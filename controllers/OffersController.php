@@ -50,7 +50,7 @@ class OffersController extends Controller
         $id = Yii::$app->request->get('id');
         
         $offer = Offers::findOne($id);
-        
+
         if (!$offer) {
             throw new NotFoundHttpException('Обьявление не найдено');
         }
@@ -145,6 +145,11 @@ class OffersController extends Controller
     {
         $id = Yii::$app->request->get('id');
         $offer = Offers::findOne($id);
+
+        if (!$offer) {
+            throw new NotFoundHttpException('Обьявление не найдено');
+        }
+
         $model = new Offer();
         $categories = OfferCategories::getOfferCategoriesId($offer->id);
 
@@ -162,31 +167,49 @@ class OffersController extends Controller
             $model->image = UploadedFile::getInstance($model, 'image');
 
             if ($model->validate()) {
-                $offer->title = $model->title;
-                $offer->description = $model->description;
-                $offer->price = $model->price;
-                $offer->type = $model->type;
-                if ($model->image) {
-                    $offer->image = UploadFile::upload($model->image, 'offer');
-                }
-                $offer->save();
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    $offer->title = $model->title;
+                    $offer->description = $model->description;
+                    $offer->price = $model->price;
+                    $offer->type = $model->type;
 
-
-                if (count($model->categories) > 0) {
-                    foreach ($offer->offerCategories as $category) {
-                        if (!in_array($category->category_id, $model->categories)) {
-                            $category->delete();
+                    if ($model->image) {
+                        $offer->image = UploadFile::upload($model->image, 'offer');
+                    }
+                    if (!$offer->save())
+                    {
+                        throw new ServerErrorHttpException('Не удалось сохранить обьявление');
+                    }
+    
+    
+                    if (count($model->categories) > 0) {
+                        foreach ($offer->offerCategories as $category) {
+                            if (!in_array($category->category_id, $model->categories)) {
+                                if (!$category->delete())
+                                {
+                                    throw new ServerErrorHttpException('Не удалось сохранить обьявление');
+                                }
+                            }
+                        }
+                        $categories = OfferCategories::getOfferCategoriesId($offer->id);
+                        foreach ($model->categories as $category) {
+                            if (!in_array($category, $categories)) {
+                                $newCategory = new OfferCategories();
+                                $newCategory->offer_id = $offer->id;
+                                $newCategory->category_id = $category;
+                                if ($newCategory->save()) 
+                                {
+                                    throw new ServerErrorHttpException('Не удалось сохранить обьявление');
+                                }
+                            }
                         }
                     }
-                    $categories = OfferCategories::getOfferCategoriesId($offer->id);
-                    foreach ($model->categories as $category) {
-                        if (!in_array($category, $categories)) {
-                            $newCategory = new OfferCategories();
-                            $newCategory->offer_id = $offer->id;
-                            $newCategory->category_id = $category;
-                            $newCategory->save();
-                        }
-                    }
+                    $transaction->commit();
+                    
+                }catch(\Exception $e){
+                    $transaction->rollBack();
+                    throw $e;
                 }
             }
         }
