@@ -48,8 +48,12 @@ class OffersController extends Controller
     public function actionIndex()
     {
         $id = Yii::$app->request->get('id');
-
+        
         $offer = Offers::findOne($id);
+        
+        if (!$offer) {
+            throw new NotFoundHttpException('Обьявление не найдено');
+        }
 
         $model = new Comment();
 
@@ -68,10 +72,7 @@ class OffersController extends Controller
                 }
             }
         }
-
-        if (!$offer) {
-            throw new NotFoundHttpException('Обьявление не найдено');
-        }
+        
 
         return $this->render('view-offer.php', ['offer' => $offer, 'model' => $model]);
     }
