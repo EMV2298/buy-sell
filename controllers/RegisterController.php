@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\form\Register;
 use app\models\Users;
+use app\src\factory\UserFactory;
 use app\src\service\UploadFile;
 use Yii;
 use yii\base\Controller;
@@ -21,31 +22,10 @@ class RegisterController extends Controller
             $model->avatar = UploadedFile::getInstance($model, 'avatar');
 
             if ($model->validate()) {
-                $transaction = Yii::$app->db->beginTransaction();
-                $avatar = UploadFile::upload($model->avatar, 'avatar');
-                try {
-                    $user = new Users();
-                    $user->username = $model->username;
-                    $user->email = $model->email;
-                    $user->password = Yii::$app->getSecurity()->generatePasswordHash($model->password);
-                    $user->avatar = $avatar;
-                    if (!$user->save()) {
-                        throw new ServerErrorHttpException('Не удалось сохранить данные');
-                    }
 
-                    $auth = new DbManager();
-                    $role = $auth->getRole('user');
-                    if (!$auth->assign($role, $user->id)) {
-                        throw new ServerErrorHttpException('Не удалось сохранить данные');
-                    }
-
-                    $transaction->commit();
-
-                    return Yii::$app->response->redirect('login');
-                } catch(\Exception $e) {
-                    UploadFile::deleteFile($avatar, 'avatar');
-                    throw $e;
-                }
+                UserFactory::create($model);
+                
+                return Yii::$app->response->redirect('login');
             }
         }
         return $this->render('register.php', ['model' => $model]);

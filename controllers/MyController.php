@@ -71,7 +71,7 @@ class MyController extends Controller
     {
         $id = Yii::$app->request->get('id');
         $offer = Offers::findOne($id);
-        if ($offer->delete()) {
+        if (isset($offer) && $offer->delete()) {
             return true;
         }
         throw new ServerErrorHttpException('Ошибка сервера');

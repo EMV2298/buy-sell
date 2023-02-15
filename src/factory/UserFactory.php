@@ -9,18 +9,44 @@ use Exception;
 use Yii;
 use yii\rbac\DbManager;
 use yii\web\ServerErrorHttpException;
+use app\models\form\Register;
 
 class UserFactory
 {
     /**
      * Сохраняет нового пользователя
-     * @param object $params Модель с данными
+     * @param Register $model Модель с данными
      */
-    public static function create($params):bool
+    public static function create($model): bool
     {
+        $transaction = Yii::$app->db->beginTransaction();
+        $avatar = UploadFile::upload($model->avatar, 'avatar');
+
+        try {
+            $user = new Users();
+            $user->username = $model->username;
+            $user->email = $model->email;
+            $user->password = Yii::$app->getSecurity()->generatePasswordHash($model->password);
+            $user->avatar = $avatar;
+            if (!$user->save()) {
+                throw new ServerErrorHttpException('Не удалось сохранить данные');
+            }
+
+            $auth = new DbManager();
+            $role = $auth->getRole('user');
+            if (!$auth->assign($role, $user->id)) {
+                throw new ServerErrorHttpException('Не удалось сохранить данные');
+            }
+
+            $transaction->commit();
+        } catch (\Exception $e) {
+            UploadFile::deleteFile($avatar, 'avatar');
+            throw $e;
+        }
+
         return true;
     }
-    
+
     /**
      * Сохраняет нового позьщователя(через ВК)
      * @param array $params Данные о пользователе
@@ -33,25 +59,24 @@ class UserFactory
 
             $transaction = Yii::$app->db->beginTransaction();
 
-            try{
+            try {
                 $newUser = new Users();
                 $newUser->username = $params['first_name'] . ' ' . $params['last_name'];
                 $newUser->email = $email;
                 $newUser->vk_id = $params['id'];
                 $newUser->avatar = UploadFile::uploadUrlAvatar($params[VkoAuth2::PHOTO_KEY]);
-    
+
                 if ($newUser->save()) {
                     $auth = new DbManager();
                     $role = $auth->getRole('user');
-                    if ($auth->assign($role, $newUser->id)){
+                    if ($auth->assign($role, $newUser->id)) {
                         $transaction->commit();
 
                         return $newUser;
                     }
                 }
                 throw new ServerErrorHttpException('Не удалось сохранить данные');
-
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 $transaction->rollBack();
                 throw $e;
             }
