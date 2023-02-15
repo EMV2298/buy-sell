@@ -20,7 +20,7 @@ class m221125_121912_create_offers_table extends Migration
                 title varchar(128) NOT NULL,
                 description TEXT NOT NULL,
                 category_id int NOT NULL,
-                price varchar(10) NOT NULL,
+                price INT NOT NULL,
                 type varchar(10) NOT NULL,
                 image varchar(128) NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES users (id),

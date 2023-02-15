@@ -12,7 +12,7 @@ use Yii;
  * @property int $user_id
  * @property string $title
  * @property string $description
- * @property string $price
+ * @property int $price
  * @property string $type
  * @property string $image
  *
@@ -39,10 +39,10 @@ class Offers extends \yii\db\ActiveRecord
         return [
             [['dt_add'], 'safe'],
             [['user_id', 'title', 'description', 'price', 'type', 'image'], 'required'],
-            [['user_id'], 'integer'],
+            [['user_id', 'price'], 'integer'],
             [['description'], 'string'],
             [['title', 'image'], 'string', 'max' => 128],
-            [['price', 'type'], 'string', 'max' => 10],
+            [['type'], 'string', 'max' => 10],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
