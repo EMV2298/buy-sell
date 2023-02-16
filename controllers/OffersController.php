@@ -8,8 +8,8 @@ use app\models\form\Comment;
 use app\models\form\Offer;
 use app\models\OfferCategories;
 use app\models\Offers;
+use app\src\factory\CommentFactory;
 use app\src\factory\OfferFactory;
-use app\src\service\UploadFile;
 use Yii;
 use yii\base\Controller;
 use yii\data\ArrayDataProvider;
@@ -62,15 +62,8 @@ class OffersController extends Controller
             $model->load(Yii::$app->request->post());
 
             if ($model->validate()) {
-                $comment = new Comments();
-                $comment->user_id = Yii::$app->user->getId();
-                $comment->offer_id = $offer->id;
-                $comment->message = $model->message;
-                if ($comment->save()) {
-                    $model = new Comment();
-                } else {
-                    throw new ServerErrorHttpException('Не удалось отправить комментарий');
-                }
+              CommentFactory::create($offer->id, $model->message);
+              $model = new Comment();
             }
         }
 
