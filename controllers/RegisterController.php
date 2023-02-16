@@ -18,9 +18,8 @@ class RegisterController extends Controller
             $model->avatar = UploadedFile::getInstance($model, 'avatar');
 
             if ($model->validate()) {
-
                 UserFactory::create($model);
-                
+
                 return Yii::$app->response->redirect('login');
             }
         }

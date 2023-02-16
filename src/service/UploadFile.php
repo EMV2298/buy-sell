@@ -16,8 +16,8 @@ class UploadFile
     public static function upload(object $file, string $folder): string
     {
         $dir = "./uploads/{$folder}";
-        if(!is_dir($dir)) {
-             mkdir($dir);
+        if (!is_dir($dir)) {
+            mkdir($dir);
         }
 
         $name = uniqid() . '.' . $file->getExtension();
@@ -36,8 +36,8 @@ class UploadFile
     public static function uploadUrlAvatar(string $filesUrl): string
     {
         $dir = "./uploads/avatar";
-        if(!is_dir($dir)) {
-             mkdir($dir);
+        if (!is_dir($dir)) {
+            mkdir($dir);
         }
         $name = uniqid() . '.png';
 

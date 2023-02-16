@@ -56,7 +56,6 @@ class UserFactory
     public static function createVk($params, $email): Users
     {
         if (isset($params['first_name']) && isset($params['last_name']) && isset($params['id']) && $email) {
-
             $transaction = Yii::$app->db->beginTransaction();
 
             try {

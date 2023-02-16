@@ -21,5 +21,4 @@ class m221207_185819_set_delete_cascade_for_offercategories extends Migration
             ON DELETE CASCADE ON UPDATE RESTRICT;'
         );
     }
-
 }

@@ -38,7 +38,7 @@ class LoginController extends Controller
         $vkOauth = new VkoAuth2();
         $token = $vkOauth->getToken($code);
 
-        if (!isset($token['email']) || !isset($token['user_id'])){
+        if (!isset($token['email']) || !isset($token['user_id'])) {
             throw new ServerErrorHttpException('Не удалось получить данные');
         }
 

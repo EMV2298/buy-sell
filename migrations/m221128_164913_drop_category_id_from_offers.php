@@ -15,5 +15,4 @@ class m221128_164913_drop_category_id_from_offers extends Migration
         $this->dropForeignKey('offers_ibfk_2', 'offers');
         $this->dropColumn('offers', 'category_id');
     }
-
 }

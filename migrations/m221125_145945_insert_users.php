@@ -31,5 +31,4 @@ class m221125_145945_insert_users extends Migration
 
         return false;
     }
-
 }

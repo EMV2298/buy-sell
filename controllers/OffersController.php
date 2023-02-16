@@ -49,7 +49,7 @@ class OffersController extends Controller
     public function actionIndex()
     {
         $id = Yii::$app->request->get('id');
-        
+
         $offer = Offers::findOne($id);
 
         if (!$offer) {
@@ -73,7 +73,7 @@ class OffersController extends Controller
                 }
             }
         }
-        
+
 
         return $this->render('view-offer.php', ['offer' => $offer, 'model' => $model]);
     }
@@ -88,7 +88,6 @@ class OffersController extends Controller
 
 
             if ($model->validate()) {
-
                 $newOffer = OfferFactory::create($model);
 
                 return Yii::$app->response->redirect("/offers/{$newOffer->id}");
@@ -140,7 +139,6 @@ class OffersController extends Controller
             $model->image = UploadedFile::getInstance($model, 'image');
 
             if ($model->validate()) {
-                
                 OfferFactory::edit($offer, $model);
             }
         }

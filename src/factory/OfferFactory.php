@@ -98,7 +98,6 @@ class OfferFactory
             $transaction->commit();
 
             return $offer;
-
         } catch (\Exception $e) {
             $transaction->rollBack();
             throw $e;
